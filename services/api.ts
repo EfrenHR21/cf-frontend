@@ -44,35 +44,35 @@ const requests = {
 };
 
 const Api = {
-    get: async (url: string) => {
+	get: async (url: string) => {
 		try {
 			return await requests.get(url);
 		} catch (error) {
 			throw error;
 		}
 	},
-    post: async (url: string, body: {}) => {
+	post: async (url: string, body: {}) => {
 		try {
 			return await requests.post(url, body);
 		} catch (error) {
 			throw error;
 		}
 	},
-    put: async (url: string, body: {}) => {
+	put: async (url: string, body: {}) => {
 		try {
-			return await requests.put(url,body);
+			return await requests.put(url, body);
 		} catch (error) {
 			throw error;
 		}
 	},
-    del: async (url: string) => {
+	del: async (url: string) => {
 		try {
 			return await requests.del(url);
 		} catch (error) {
 			throw error;
 		}
 	},
-    patch: async (url: string) => {
+	patch: async (url: string) => {
 		try {
 			return await requests.patch(url);
 		} catch (error) {
