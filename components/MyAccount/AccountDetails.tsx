@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import { Button } from 'react-bootstrap';
 import { Card, Form } from 'react-bootstrap';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -17,43 +17,48 @@ const AccountDetails: FC<IAccountDetailsProps> = ({
   addToast,
 }) => {
 
-  const [accountForm, setAccountForm] = React.useState({
+  const [accountForm, setAccountForm] = useState({
     name: user?.name,
     oldPassword: '',
     newPassword: '',
     confirmPassword: '',
   });
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const updateUserAccount = async (e: unknown) => {
+  const updateHandler = async (e:any) => {
     e.preventDefault();
     try {
+      setIsLoading(true);
       const { name, oldPassword, newPassword, confirmPassword } = accountForm;
-
-      if (!newPassword || !confirmPassword || !oldPassword) {
-        throw new Error('Invalid password');
-      }
-
-      if (newPassword && newPassword.length < 6) {
-        throw new Error('Password is too short. Minimum 6 characters');
+      if (!name || !oldPassword || !newPassword || !confirmPassword) {
+        throw new Error('Please fill all the fields');
       }
       if (newPassword !== confirmPassword) {
-        throw new Error('Password does not match');
+        throw new Error('Password and confirm password does not match');
       }
-      setIsLoading(true);
+      if (newPassword.length < 6) {
+        throw new Error('Password is too short. Minimum 6 characters');
+      }
       const payload = {
         name,
         oldPassword,
         newPassword,
       };
-      const { success, message, result }: responsePayload =
-        await User.updateUsers(payload, user.id);
-      if (!success) throw new Error(message);
+      const { success, message, result }: responsePayload = 
+        await User.updateUser(user.id, payload);
+        if (!success){ 
+          throw new Error(message);
+        }  
 
-      dispatch({
-        type: 'UPDATE_USER',
-        payload: result,
-      });
+        dispatch({
+          type: 'UPDATE_USER',
+          payload: result,
+        });
+
+        addToast(message, { 
+          appearance: 'success', 
+          autoDismiss: true, 
+        });
 
       setAccountForm({
         name: result.name,
@@ -62,26 +67,26 @@ const AccountDetails: FC<IAccountDetailsProps> = ({
         confirmPassword: '',
       });
 
-      addToast(message, { appearance: 'success', autoDismiss: true });
     } catch (error: any) {
-      console.log(error);
-      if (error.response) {
-        return addToast(error.response.data.message, {
-          appearance: 'error',
-          autoDismiss: true,
+        if (error.response) {
+          return addToast(error.response.data.message, {
+            appearance: 'error',
+            autoDismiss: true,
         });
       }
       addToast(error.message, { appearance: 'error', autoDismiss: true });
-    } finally {
+    } 
+    finally {
       setIsLoading(false);
     }
   };
+
   return (
     <Card className='mt-3'>
-      <Card.Header>Register</Card.Header>
+      <Card.Header>Your Account details</Card.Header>
       <Card.Body>
         <Form>
-          <Form.Group className='mb-3' controlId='exampleForm.ControlInput1'>
+          <Form.Group controlId='formBasicEmail' className='mb-3'>
             <Form.Label>Full name</Form.Label>
             <Form.Control
               type='text'
@@ -92,69 +97,64 @@ const AccountDetails: FC<IAccountDetailsProps> = ({
               }
             />
           </Form.Group>
-          <Form.Group className='mb-3' controlId='exampleForm.ControlInput1'>
-            <Form.Label>Email address</Form.Label>
+          <Form.Group controlId='formBasicEmail' className='mb-3'>
+            <Form.Label>Email</Form.Label>
             <Form.Control
-              type='email'
-              placeholder='name@example.com'
-              disabled={true}
-              value={user?.email}
+              type='text'
+              disabled
+              value={user.email}
             />
           </Form.Group>
-          <Form.Group className='mb-3' controlId='exampleForm.ControlInput1'>
-            <Form.Label>Current Password</Form.Label>
+          <Form.Group controlId='formBasicPassword' className='mb-3'>
+            <Form.Label>Old password</Form.Label>
             <Form.Control
               type='password'
-              placeholder='Enter your password'
-              onChange={(e) =>
-                setAccountForm({ ...accountForm, oldPassword: e.target.value })
-              }
+              placeholder='Old password'
               value={accountForm.oldPassword}
+              onChange={(e) =>
+                setAccountForm({ ...accountForm, oldPassword: e.target.value})
+              }
             />
           </Form.Group>
-          <Form.Group className='mb-3' controlId='exampleForm.ControlInput1'>
+          <Form.Group controlId='formBasicPassword' className='mb-3'>
             <Form.Label>New Password</Form.Label>
             <Form.Control
               type='password'
-              placeholder='Enter your new password'
+              placeholder='New password'
+              value={accountForm.newPassword}
               onChange={(e) =>
                 setAccountForm({ ...accountForm, newPassword: e.target.value })
               }
-              value={accountForm.newPassword}
             />
           </Form.Group>
-          <Form.Group className='mb-3' controlId='exampleForm.ControlInput1'>
-            <Form.Label>Re-type Password</Form.Label>
+          <Form.Group controlId='formBasicPassword' className='mb-3'>
+            <Form.Label>Confirm password</Form.Label>
             <Form.Control
               type='password'
-              placeholder='Re-type your password'
-              onChange={(e) =>
-                setAccountForm({
-                  ...accountForm,
-                  confirmPassword: e.target.value,
-                })
-              }
+              placeholder='Confirm password'
               value={accountForm.confirmPassword}
+              onChange={(e) =>
+                setAccountForm({ ...accountForm, confirmPassword: e.target.value })
+              }
             />
           </Form.Group>
-          <Form.Group className='mb-3'>
-            <Button
-              variant='info'
-              type='submit'
-              className='btnAuth'
-              onClick={updateUserAccount}
-              disabled={isLoading}
-            >
-              {isLoading && (
-                <span
-                  className='spinner-border spinner-border-sm'
-                  role='status'
-                  aria-hidden='true'
-                ></span>
-              )}
-              Update
-            </Button>
-          </Form.Group>
+
+          <Button 
+            variant='info' 
+            className='btnAuth' 
+            disabled={isLoading} 
+            onClick={(e) => updateHandler(e)}
+          >
+            {isLoading && (
+              <span
+                className='spinner-border spinner-border-sm'
+                role='status'
+                aria-hidden='true'
+              ></span>
+            )}
+            Update
+          </Button> 
+          
         </Form>
       </Card.Body>
     </Card>

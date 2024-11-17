@@ -6,10 +6,10 @@ export const User = {
     getUser: async (): Promise<responsePayload> => await Api.get('/users'),
     createUsers: async (user: Record<string, any>): Promise<responsePayload> =>
         await Api.post('/users', user),
-    updateUsers: async (
+    updateUser: async (
         id: string,
         user: Record<string, any>
-    ): Promise<responsePayload> => await Api.put('/users/' + id, user),
+    ): Promise<responsePayload> => await Api.patch('/users/update-name-password/' + id, user),
     loginUser: async (user: Record<string, any>): Promise<responsePayload> =>
         await Api.post('/users/login', user),
     logoutUser: async (): Promise<responsePayload> =>

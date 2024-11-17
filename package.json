@@ -17,6 +17,8 @@
     "react-bootstrap": "^2.10.5",
     "react-bootstrap-icons": "^1.11.4",
     "react-dom": "19.0.0-rc-66855b96-20241106",
+    "react-rating-stars-component": "^2.2.0",
+    "react-star-rating-component": "^1.4.1",
     "react-toast-notifications": "^2.5.1",
     "react-transition-group": "^4.4.5",
     "validator": "^13.12.0"
@@ -25,6 +27,7 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/react-star-rating-component": "^1.4.4",
     "eslint": "^8",
     "eslint-config-next": "15.0.3",
     "typescript": "^5"

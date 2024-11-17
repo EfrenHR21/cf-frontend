@@ -31,9 +31,9 @@ const requests = {
 			.put(process.env.NEXT_PUBLIC_BASE_API_PREFIX + url, body)
 			.then(responseBody)
 			.catch((error) => error.response?.data || error),
-	patch: (url: string) =>
+	patch: (url: string, body: any) =>
 		axios
-			.patch(process.env.NEXT_PUBLIC_BASE_API_PREFIX + url)
+			.patch(process.env.NEXT_PUBLIC_BASE_API_PREFIX + url, body)
 			.then(responseBody)
 			.catch((error) => error.response?.data || error),
 	del: (url: string) =>
@@ -72,9 +72,9 @@ const Api = {
 			throw error;
 		}
 	},
-	patch: async (url: string) => {
+	patch: async (url: string, body: {}) => {
 		try {
-			return await requests.patch(url);
+			return await requests.patch(url, body);
 		} catch (error) {
 			throw error;
 		}

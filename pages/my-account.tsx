@@ -3,7 +3,7 @@ import AccountDetails from '@/components/MyAccount/AccountDetails';
 import AllOrders from '@/components/MyAccount/AllOrders';
 import { Context } from '@/context';
 import { User } from '@/services/User.service';
-import Router from 'next/router';
+import Router, { useRouter } from 'next/router';
 import React, { useContext, useEffect } from 'react';
 import { Col, Row, Nav, Tab } from 'react-bootstrap';
 import { useToasts } from 'react-toast-notifications';
@@ -15,6 +15,13 @@ const MyAccount = () => {
 		dispatch,
 	} = useContext(Context);
 
+	const router = useRouter();
+	useEffect(() => {
+		if (!user) {
+			router.push('/auth');
+		}
+	}, [user, router]);
+	
 	const logoutHandler = async (e: any) => {
 		e.preventDefault();
 		try {
@@ -37,11 +44,7 @@ const MyAccount = () => {
 					<Nav variant='pills' className='flex-column'>
 						<Nav.Item>
 							<Nav.Link eventKey='first'>
-								<AccountDetails
-									user={user}
-									dispatch={dispatch}
-									addToast={addToast}
-								/>
+								Account Details
 							</Nav.Link>
 						</Nav.Item>
 						<Nav.Item>
@@ -64,7 +67,7 @@ const MyAccount = () => {
 							/>
 						</Tab.Pane>
 						<Tab.Pane eventKey='second'>
-							<AllOrders />
+							<h1>All Orders</h1>
 						</Tab.Pane>
 					</Tab.Content>
 				</Col>
