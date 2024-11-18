@@ -18,14 +18,15 @@ type Context = {
 	state: Record<string, any>;
 	dispatch: (action: {
 		type: string;
-		payload:  any }) => void;
-	
+		payload: any
+	}) => void;
+
 };
 
 const initialContext: Context = {
 	state: intialState,
 	dispatch: () => null,
-	
+
 };
 
 // create context
@@ -58,8 +59,8 @@ const Provider = ({ children }: Props) => {
 		dispatch({
 			type: 'LOGIN',
 			payload: localStorage.getItem('_cf_user')
-			? JSON.parse(window.localStorage.getItem('_cf_user') || '{}')
-			: null,
+				? JSON.parse(window.localStorage.getItem('_cf_user') || '{}')
+				: null,
 		});
 		return;
 	}, []);
@@ -73,7 +74,7 @@ const Provider = ({ children }: Props) => {
 		(error) => {
 			// any status codes that falls outside the range of 2xx cause this function
 			// to trigger
-			if (error.status === 401 ) {
+			if (error.status === 401) {
 				return new Promise((resolve, reject) => {
 					axios
 						.put('/api/v1/users/logout')

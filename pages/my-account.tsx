@@ -1,16 +1,41 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import Router from 'next/router';
+import AccountDetails from '@/components/MyAccount/AccountDetails';
+import AllOrders from '@/components/MyAccount/AllOrders';
+import { Context } from '@/context';
+import { User } from '@/services/User.service';
+import Router, { useRouter } from 'next/router';
 import React, { useContext, useEffect } from 'react';
 import { Col, Row, Nav, Tab } from 'react-bootstrap';
-import StarRatingComponent from 'react-star-rating-component';
 import { useToasts } from 'react-toast-notifications';
-import AccountDetails from '../components/MyAccount/AccountDetails';
-import AllOrders from '../components/MyAccount/AllOrders';
-import { Context } from '../context';
-import { User } from '../services/user.service';
 
 const MyAccount = () => {
+	const { addToast } = useToasts();
+	const {
+		state: { user },
+		dispatch,
+	} = useContext(Context);
+
+	const router = useRouter();
+	useEffect(() => {
+		if (!user) {
+			router.push('/auth');
+		}
+	}, [user, router]);
 	
+	const logoutHandler = async (e: any) => {
+		e.preventDefault();
+		try {
+			dispatch({ type: 'LOGOUT', payload: null });
+			await User.logoutUser();
+			localStorage.removeItem('_digi_user');
+			addToast('Logout Successful', { appearance: 'success' });
+		} catch (error: any) {
+			addToast(error.message, {
+				appearance: 'error',
+				autoDismiss: true,
+			});
+		}
+	};
 
 	return (
 		<Tab.Container id='left-tabs-example' defaultActiveKey='first'>
@@ -18,22 +43,15 @@ const MyAccount = () => {
 				<Col sm={3}>
 					<Nav variant='pills' className='flex-column'>
 						<Nav.Item>
-							<Nav.Link eventKey='first' href='#'>
+							<Nav.Link eventKey='first'>
 								Account Details
 							</Nav.Link>
 						</Nav.Item>
 						<Nav.Item>
-							<Nav.Link eventKey='second' href='#'>
-								All Orders
-							</Nav.Link>
+							<Nav.Link eventKey='second' href='#'>All Orders</Nav.Link>
 						</Nav.Item>
-						{/* <Nav.Item>
-							<Nav.Link eventKey='third' href='#'>
-								Support tickets
-							</Nav.Link>
-						</Nav.Item> */}
 						<Nav.Item>
-							<Nav.Link eventKey='third' href='#' onClick={logoutHandler}>
+							<Nav.Link eventKey='third' href='#' onClick={(e) => logoutHandler(e)}>
 								Logout
 							</Nav.Link>
 						</Nav.Item>
@@ -49,7 +67,7 @@ const MyAccount = () => {
 							/>
 						</Tab.Pane>
 						<Tab.Pane eventKey='second'>
-							<AllOrders />
+							<h1>All Orders</h1>
 						</Tab.Pane>
 					</Tab.Content>
 				</Col>

@@ -31,9 +31,9 @@ const requests = {
 			.put(process.env.NEXT_PUBLIC_BASE_API_PREFIX + url, body)
 			.then(responseBody)
 			.catch((error) => error.response?.data || error),
-	patch: (url: string) =>
+	patch: (url: string, body: any) =>
 		axios
-			.patch(process.env.NEXT_PUBLIC_BASE_API_PREFIX + url)
+			.patch(process.env.NEXT_PUBLIC_BASE_API_PREFIX + url, body)
 			.then(responseBody)
 			.catch((error) => error.response?.data || error),
 	del: (url: string) =>
@@ -44,37 +44,37 @@ const requests = {
 };
 
 const Api = {
-    get: async (url: string) => {
+	get: async (url: string) => {
 		try {
 			return await requests.get(url);
 		} catch (error) {
 			throw error;
 		}
 	},
-    post: async (url: string, body: {}) => {
+	post: async (url: string, body: {}) => {
 		try {
 			return await requests.post(url, body);
 		} catch (error) {
 			throw error;
 		}
 	},
-    put: async (url: string, body: {}) => {
+	put: async (url: string, body: {}) => {
 		try {
-			return await requests.put(url,body);
+			return await requests.put(url, body);
 		} catch (error) {
 			throw error;
 		}
 	},
-    del: async (url: string) => {
+	del: async (url: string) => {
 		try {
 			return await requests.del(url);
 		} catch (error) {
 			throw error;
 		}
 	},
-    patch: async (url: string) => {
+	patch: async (url: string, body: {}) => {
 		try {
-			return await requests.patch(url);
+			return await requests.patch(url, body);
 		} catch (error) {
 			throw error;
 		}

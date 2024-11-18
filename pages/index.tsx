@@ -1,25 +1,69 @@
+import axios from 'axios';
+import { GetServerSideProps, NextPage} from 'next';
+import Head from 'next/head';
+import Image from 'next/image';
+import { useRouter } from 'next/router';
+import { Button, Col, Row } from 'react-bootstrap';
+import ProductItem from '../components/Products/ProductItem';
+import styles from '../styles/Home.module.css';
 
-import React from 'react';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import RegisterLogin from '@/components/Auth/RegisterLogin';
+interface Props{
+    products: Record<string, any>;
+}
 
-
-
-
-const Auth = () => {
-	return (
-			<Row>
-				<Col m={6} className='mt-3'>
-                    <RegisterLogin />
+const Home: NextPage<Props> = ({ products}) => {
+    console.log(products) 
+    const router = useRouter();
+    return(
+        <>
+            <h3 className={styles.productCats}>Latest Products</h3>
+            <Row className='g-4' xs={4} md={4}>
+                {products.latestProducts &&
+                    products.latestProducts.map((product: any, index: React.Key) => (
+                        <ProductItem product={product} userType={'customer'} key={index} />
+                    ))
+                }
+            </Row>
+            <hr />
+            <h3 className={styles.productCats}>Top Rated Products</h3>
+            <Row className='g-4' xs={4} md={4}>
+                {products.topRatedProducts &&
+                    products.topRatedProducts.map((product: any, index: React.Key) => (
+                        <ProductItem product={product} userType={'customer'} key={index} />
+                    ))
+                }
+            </Row>
+            <Row>
+                <Col>
+                    <Button variant='primary' className={styles.viewMoreBtn} onClick={() => router.push('/products')}>
+                        View More
+                    </Button>
                 </Col>
-                <Col m={6} className='mt-3'>
-                    <RegisterLogin isRegisterForm={true} />
-                </Col>
-			</Row>
-	);
+            </Row>
+        </>
+    );
 };
 
+export const getServerSideProps: GetServerSideProps<Props> = async (
+    context
+): Promise<any> => {
+    try {
+        const {data} = await axios.get(
+            `${
+                process.env.NODE_ENV === 'production' 
+                    ? process.env.NEXT_PUBLIC_BASE_API_PROD_URL 
+                    : process.env.NEXT_PUBLIC_BASE_API_URL
+            }/products?homepage=true`
+        );
 
+        return {
+            props: {
+                products: data?.result[0] || {},
+            },
+        };
+    } catch (error) {
+        console.log(error);
+    }
+}
 
-export default Auth;
+export default Home;
